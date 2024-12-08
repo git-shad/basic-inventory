@@ -60,7 +60,7 @@ export default function Home () {
     if (isUpdatingStatus) return; 
     setIsUpdatingStatus(true); 
     const id: number = Number(e.currentTarget.getAttribute('table-id'));
-    const result = await updateStatusUsageItem(id, tableStatus[index]);
+    const result = await updateStatusUsageItem(id, !tableStatus[index]);
     if (result) {
       setTableStatus(prevStatus => {
         const updatedStatus = [...prevStatus];

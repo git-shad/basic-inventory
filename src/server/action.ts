@@ -5,7 +5,6 @@ import { db } from './mysql2'
 
 export async function updateStatusUsageItem(id:number,status:boolean = false){
   try{
-    console.log([status ? 1 : 0,id])
     const results = await new Promise((resolve, reject)=>{
       db.query('update usageItem set status = ? where usageId = ?;', [status ? 1 : 0,id], (err,res:any)=>{
         if(err) reject(err)
@@ -29,6 +28,7 @@ export async function searchDataUsageItem(search:string){
         else resolve(res)
       })
     }))
+    try {
     return JSON.parse(results).map((arr:any)=>{
       return {
         id: arr.usageId,
@@ -39,6 +39,10 @@ export async function searchDataUsageItem(search:string){
         status: Boolean(arr.status)
       }
     })
+    } catch (parseError) {
+      console.error("JSON parsing error:", parseError, "Original data:", results);
+      return []; 
+    }
   }catch(error){
     console.log("Database error:", error);
     throw error; 
@@ -63,6 +67,7 @@ export async function getAllDataUsageItemList(){
         else resolve(res)
       })
     }))
+    try {
     return JSON.parse(results).map((arr:any)=>{
       return {
         id: arr.usageId,
@@ -75,6 +80,10 @@ export async function getAllDataUsageItemList(){
         returned: arr.returned
       }
     })
+    } catch (parseError) {
+      console.error("JSON parsing error:", parseError, "Original data:", results);
+      return []; 
+    }
   }catch(error){
     console.log("Database error:", error);
     throw error;
@@ -89,6 +98,7 @@ export async function getDataUsageItemList(){
         else resolve(res)
       })
     }))
+    try {
     return JSON.parse(results).map((arr:any)=>{
       return {
         id: arr.usageId,
@@ -99,6 +109,10 @@ export async function getDataUsageItemList(){
         status: Boolean(arr.status)
       }
     })
+    } catch (parseError) {
+      console.error("JSON parsing error:", parseError, "Original data:", results);
+      return [];
+    }
   }catch(error){
     console.log("Database error:", error);
     throw error;
