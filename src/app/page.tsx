@@ -46,18 +46,43 @@ export default function Home () {
     return () => cancelAnimationFrame(animationFrameId);
    },[])
   //end:003
-  
+
   //start:004 post data from server
   const [tdata,setTData] = useState([{ id:0 ,borrower:'', educator:'', material:[], room:'',status:false }]);
   const [thistory,setTHistory] = useState([{ id:0 ,borrower:'', educator:'', material:[], room:'',date:'',barrowed:'',returned:'' }]);
   const [materialDataList,setMaterialDataList] = useState([])
   const [roomDataList,setRoomDataList] = useState([])
+
+  const [tableStatus, setTableStatus] = useState<boolean[]>([]);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false); 
+
+  const handleTableStatus = async (e: any, index: number) => {
+    if (isUpdatingStatus) return; 
+    setIsUpdatingStatus(true); 
+    const id: number = Number(e.currentTarget.getAttribute('table-id'));
+    const result = await updateStatusUsageItem(id, tableStatus[index]);
+    if (result) {
+      setTableStatus(prevStatus => {
+        const updatedStatus = [...prevStatus];
+        updatedStatus[index] = !updatedStatus[index];
+        return updatedStatus;
+      });
+    }    
+    setIsUpdatingStatus(false); 
+  };
+
   useEffect(()=>{
     (async ()=>{ setTData(await getDataUsageItemList()) })();
     (async ()=>{ setTHistory(await getAllDataUsageItemList()) })();
     (async ()=>{ setMaterialDataList(await materialList()) })();
     (async ()=>{ setRoomDataList(await roomList()) })();
   },[])
+
+  useEffect(() => {
+    // Initialize tableStatus with the status values from tdata
+    setTableStatus(tdata.map(item => item.status));
+  }, [tdata]);
+
   
   //every change the value of updateUsageItemList it refresh the table
   const [updateUsageItemList,setUpdateUsageItemList] = useState(false)
@@ -245,29 +270,6 @@ export default function Home () {
       }
     })
   }
-
-  const [tableStatus,setTableStatus] = useState<boolean[]>([false]);
-  const handleTableStatus = async (e:any,index:number)=>{
-    const id:number = Number(e.currentTarget.getAttribute('table-id'))
-    const result = await updateStatusUsageItem(id,tableStatus[index])
-    if(result){
-      setTableStatus((prevStatus:boolean[])=>{
-        const arr = [...prevStatus]
-        arr[index] = !arr[index]
-        return arr
-      } )
-    }    
-  }
-
-  useEffect(()=>{
-    tdata.map((data,index) => {
-      setTableStatus((prevStatus:boolean[])=>{
-        const arr = [...prevStatus]
-        arr[index] = data.status
-        return arr
-      })
-    })
-  },[tdata])
 
   return (
   <>

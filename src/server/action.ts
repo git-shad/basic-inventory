@@ -5,8 +5,9 @@ import { db } from './mysql2'
 
 export async function updateStatusUsageItem(id:number,status:boolean = false){
   try{
+    console.log([status ? 1 : 0,id])
     const results = await new Promise((resolve, reject)=>{
-      db.query('update usageItem set status = ? where usageId = ?;', [status,id], (err,res:any)=>{
+      db.query('update usageItem set status = ? where usageId = ?;', [status ? 1 : 0,id], (err,res:any)=>{
         if(err) reject(err)
         if(res.affectedRows > 0) resolve(true); // Resolve with true if any rows were affected
         else resolve(false)
