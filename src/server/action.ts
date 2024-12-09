@@ -173,7 +173,7 @@ export async function deleteMaterial(id: number) {
 export async function materialList(){
   try {
     const results = JSON.stringify(await new Promise((resolve, reject) => {
-      db.query('select materialId as id ,name from material', (err, res) => {
+      db.query('select materialId as id ,name from material order by materialId desc', (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });
@@ -220,7 +220,7 @@ export async function addRoom(name: string) {
 export async function roomList(){
   try {
     const results = JSON.stringify(await new Promise((resolve, reject) => {
-      db.query('select roomId as id ,name from room', (err, res) => {
+      db.query('select roomId as id ,name from room order by roomId desc', (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });
