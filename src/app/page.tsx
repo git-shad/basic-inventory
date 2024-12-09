@@ -234,8 +234,8 @@ export default function Home () {
   //end:009
 
 
-  //start:010 get input barrower and educator in text field
-  const [inpTextFields,setInpTField] = useState({barrower:'',educator:''})
+  //start:010 get input borrower and educator in text field
+  const [inpTextFields,setInpTField] = useState({borrower:'',educator:''})
   const handleChangeText = (e: any)=>{
     setInpTField({
       ...inpTextFields,
@@ -247,7 +247,7 @@ export default function Home () {
   //start:011 This function is responsible for adding a new row of data to the server.
   const addRowDataHiramInServer = async (e:any)=>{
     // Check if all required fields are filled
-    if(inpTextFields.barrower === '' || inpTextFields.educator === '' || selectedMaterial.length === 0 || selectedRoom === ''){
+    if(inpTextFields.borrower === '' || inpTextFields.educator === '' || selectedMaterial.length === 0 || selectedRoom === ''){
       Swal.fire({
         icon: "warning",
         title: "sorry but require to fill all",
@@ -259,7 +259,7 @@ export default function Home () {
 
     // Send data to the server
     await setDataUsageItem({
-      borrower: inpTextFields.barrower,
+      borrower: inpTextFields.borrower,
       educator: inpTextFields.educator,
       material: JSON.stringify(selectedMaterial),
       room: selectedRoom
@@ -365,6 +365,8 @@ export default function Home () {
   const handleRoomAddInputSubmit = async ()=>{
     await addRoom(roomAddInput).then(()=>{
       (async ()=>{ setRoomDataList(await roomList()) })();
+    }).then(()=>{
+      setRoomAddInput('')
     })
   }
 
@@ -376,13 +378,15 @@ export default function Home () {
   const handleMaterialAddInputSubmit = async ()=>{
     await addMaterial(materialAddInput).then(()=>{
       (async ()=>{ setMaterialDataList(await materialList()) })();
+    }).then(()=>{
+      setMaterialAddInput('')
     })
   }
 
   return (
   <>
     <div ref={showFloating} className='hidden '>
-      <div className='absolute z-10 inset-0 flex justify-center items-center backdrop-blur-sm'>
+      <div className='absolute z-20 inset-0 flex justify-center items-center backdrop-blur-sm'>
         <div className='grid place-content-center grid-cols-2 gap-4'>
           <div ref={menuOption} className='col-span-2 flex justify-end'>
             <Box component='form' className='w-[35ch] shadow-2xl bg-white border-2 rounded-xl py-2 px-4'>
@@ -399,7 +403,7 @@ export default function Home () {
                     </div>
                   </div>
                 </div>
-                <TextField name='barrower' value={inpTextFields.barrower} onChange={handleChangeText} className='col-span-1' size='small' label='Barrower' variant='outlined' fullWidth/>
+                <TextField name='borrower' value={inpTextFields.borrower} onChange={handleChangeText} className='col-span-1' size='small' label='Borrower' variant='outlined' fullWidth/>
                 <TextField name='educator' value={inpTextFields.educator} onChange={handleChangeText} className='col-span-1' size='small' label='Educator' variant='outlined' fullWidth/>
                 <Button onClick={handleMaterialOption} className='col-span-1' variant='outlined' fullWidth>Material</Button>
                 <Button onClick={handleRoomOption} className='col-span-1' variant='outlined' fullWidth>Class Room</Button>
@@ -542,7 +546,7 @@ export default function Home () {
                           <TableCell className='bg-gray-800 text-white'>Educator</TableCell>
                           <TableCell className='bg-gray-800 text-white'>Used In</TableCell>
                           <TableCell className='bg-gray-800 text-white'>Date</TableCell>
-                          <TableCell className='bg-gray-800 text-white'>Barrowed</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Borrowed</TableCell>
                           <TableCell className='bg-gray-800 text-white'>Returned</TableCell>
                         </TableRow>
                       </TableHead>
