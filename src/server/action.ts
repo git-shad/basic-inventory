@@ -49,7 +49,7 @@ export async function searchDataUsageItem(search:string){
   }
 }
 
-export async function getAllDataUsageItemList(){
+export async function getAllHistoryDataUsageItemList(){
   try{
     const results = JSON.stringify(await new Promise((resolve, reject)=>{
       db.query(
@@ -63,6 +63,47 @@ export async function getAllDataUsageItemList(){
               end as returned 
           from usageItem
           where date(created_at) != date(current_timestamp)
+          order by date(created_at) desc;`, (err,res)=>{
+        if(err) reject(err)
+        else resolve(res)
+      })
+    }))
+    try {
+    return JSON.parse(results).map((arr:any)=>{
+      return {
+        id: arr.usageId,
+        borrower: arr.borrower,
+        educator: arr.educator,
+        material: JSON.parse(arr.material),
+        room: arr.room,
+        date: arr.date,
+        barrowed: arr.barrowed,
+        returned: arr.returned
+      }
+    })
+    } catch (parseError) {
+      console.error("JSON parsing error:", parseError, "Original data:", results);
+      return []; 
+    }
+  }catch(error){
+    console.log("Database error:", error);
+    throw error;
+  }
+}
+
+export async function getAllDataUsageItemList(){
+  try{
+    const results = JSON.stringify(await new Promise((resolve, reject)=>{
+      db.query(
+        `select 
+            usageId, borrower, educator, material, room,
+            date_format(date(created_at),'%Y-%m-%d') as date, 
+            date_format(time(created_at),'%l:%i %p') as barrowed, 
+              case 
+                when status = 0 then 'Fail' 
+                else date_format(time(updated_at),'%l:%i %p') 
+              end as returned 
+          from usageItem
           order by date(created_at) desc;`, (err,res)=>{
         if(err) reject(err)
         else resolve(res)

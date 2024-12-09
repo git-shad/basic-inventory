@@ -4,7 +4,7 @@ import {
   setDataUsageItem, 
   getDataUsageItemList, 
   updateStatusUsageItem,
-  getAllDataUsageItemList,
+  getAllHistoryDataUsageItemList,
   deleteMaterial,deleteRoom,
   addMaterial,addRoom
 } from '../server/action'
@@ -77,7 +77,7 @@ export default function Home () {
 
   useEffect(()=>{
     (async ()=>{ setTData(await getDataUsageItemList()) })();
-    (async ()=>{ setTHistory(await getAllDataUsageItemList()) })();
+    (async ()=>{ setTHistory(await getAllHistoryDataUsageItemList()) })();
     (async ()=>{ setMaterialDataList(await materialList()) })();
     (async ()=>{ setRoomDataList(await roomList()) })();
   },[])
@@ -451,6 +451,7 @@ export default function Home () {
           <div className='col-span-1'>
             <Button onClick={()=>{setShowSwitched('basic-list')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<PiClipboardTextDuotone/>}>Basic List</Button>
             <Button onClick={()=>{setShowSwitched('history-list')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<MdHistory/>}>History List</Button>
+            <Button onClick={()=>{setShowSwitched('chart')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<AiTwotoneSetting/>}>Chart</Button>
             <Button onClick={()=>{setShowSwitched('manage')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<AiTwotoneSetting/>}>Manage</Button>
             <Button className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<MdOutlineLogout/>}>Logout</Button>
           </div>
