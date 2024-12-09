@@ -4,14 +4,16 @@ import {
   setDataUsageItem, 
   getDataUsageItemList, 
   updateStatusUsageItem,
-  getAllDataUsageItemList 
+  getAllDataUsageItemList,
+  deleteMaterial,deleteRoom,
+  addMaterial,addRoom
 } from '../server/action'
 import { useRef, useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import {  
   Button,IconButton,
-  Table, TableBody, TableCell, TableHead, TableRow, TableContainer,
-  ThemeProvider,Box, TextField, Paper, ListItemButton, ListItemIcon, 
+  Table, TableBody, TableCell, TableHead, TableRow, 
+  TableContainer,Box, TextField, Paper, ListItemButton, ListItemIcon, 
   ListItemText, List,
   Collapse
  } from '@mui/material';
@@ -20,12 +22,14 @@ import {
 import { BiMenu } from "react-icons/bi"
 import { PiClipboardTextDuotone } from "react-icons/pi"
 import { RiFunctionAddFill } from "react-icons/ri"
-import { MdHistory, MdOutlineLogout } from "react-icons/md"
+import { MdHistory, MdOutlineLogout, MdOutlineDeleteOutline } from "react-icons/md"
 import { SiReaddotcv } from "react-icons/si";
 import { FaXmark } from "react-icons/fa6";
 import { AiTwotoneSetting } from "react-icons/ai";
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
+import { FaRegEdit } from "react-icons/fa";
+import { IoMdAddCircle } from "react-icons/io";
 
 export default function Home () {
 
@@ -195,8 +199,7 @@ export default function Home () {
 
     const ref1 = showMenu.current
     const ref2 = expandMain.current
-    
-    console.log(menu)
+     
     if(menu){
       ref1.classList.add('hidden')
       ref2.classList.remove('col-span-4')
@@ -241,7 +244,9 @@ export default function Home () {
   }
   //end:010
 
+  //start:011 This function is responsible for adding a new row of data to the server.
   const addRowDataHiramInServer = async (e:any)=>{
+    // Check if all required fields are filled
     if(inpTextFields.barrower === '' || inpTextFields.educator === '' || selectedMaterial.length === 0 || selectedRoom === ''){
       Swal.fire({
         icon: "warning",
@@ -252,6 +257,7 @@ export default function Home () {
       return;
     }
 
+    // Send data to the server
     await setDataUsageItem({
       borrower: inpTextFields.barrower,
       educator: inpTextFields.educator,
@@ -259,6 +265,7 @@ export default function Home () {
       room: selectedRoom
     }).then((isDone)=>{
       if(isDone){
+        // Show success message and update the table
         Swal.fire({
           icon: "success",
           title: "Successfully!",
@@ -268,6 +275,75 @@ export default function Home () {
           setUpdateUsageItemList(!updateUsageItemList)
         })
       }
+    })
+  }
+  //end:011
+
+  const handleDeleteMaterialItem = async (e:any)=>{
+    const id: number = Number(e.currentTarget.getAttribute('table-id'));
+    
+    await deleteMaterial(id).then((isDone)=>{
+      if(isDone){
+        // Show success message and update the table
+        Swal.fire({
+          icon: "success",
+          title: "Successfully!",
+          showConfirmButton: false,
+          timer: 1500
+        }).then(()=>{
+          (async ()=>{ setMaterialDataList(await materialList()) })();
+        })
+      }
+    })
+  }
+
+  const handleDeleteRoom = async (e:any)=>{
+    const id: number = Number(e.currentTarget.getAttribute('table-id'));
+    
+    await deleteRoom(id).then((isDone)=>{
+      if(isDone){
+        // Show success message and update the table
+        Swal.fire({
+          icon: "success",
+          title: "Successfully!",
+          showConfirmButton: false,
+          timer: 1500
+        }).then(()=>{
+          (async ()=>{ setRoomDataList(await roomList()) })();
+        })
+      }
+    })
+  }
+
+  const [isMaterialAddInputShow,setMaterialAddInputShow] = useState(false)
+  const handleMaterialAddInputShow = ()=>{
+    setMaterialAddInputShow(!isMaterialAddInputShow)
+  }
+
+  const [isRoomAddInputShow,setRoomAddInputShow] = useState(false)
+  const handleRoomAddInputShow = ()=>{
+    setRoomAddInputShow(!isRoomAddInputShow)
+  }
+
+  const [roomAddInput,setRoomAddInput] = useState('')
+  const handleRoomAddInputChange = (e:any)=>{
+    setRoomAddInput(e.target.value)
+  }
+
+  const handleRoomAddInputSubmit = async ()=>{
+    await addRoom(roomAddInput).then(()=>{
+      (async ()=>{ setRoomDataList(await roomList()) })();
+    })
+  }
+
+  const [materialAddInput,setMaterialAddInput] = useState('')
+  const handleMaterialAddInputChange = (e:any)=>{
+    setMaterialAddInput(e.target.value)
+  }
+
+  const handleMaterialAddInputSubmit = async ()=>{
+    await addMaterial(materialAddInput).then(()=>{
+      (async ()=>{ setMaterialDataList(await materialList()) })();
     })
   }
 
@@ -331,7 +407,7 @@ export default function Home () {
 
     <div ref={disableBg} className="grid grid-cols-5 bg-gray-200 text-black h-full">
 
-      <div ref={showMenu} className="col-span-1 h-screen border border-r rounded-tr-md rounded-br-md py-4 px-2 bg-white">
+      <div ref={showMenu} className="col-span-1 h-screen border border-r rounded-tr-md rounded-br-md py-4 px-2 bg-white shadow-md">
         <div className='grid grid-cols-1 gap-1'>
           <div className='col-span-1 flex justify-center mb-4'>
             <div className="text-xl font-bold">HIRAM</div>
@@ -346,29 +422,30 @@ export default function Home () {
       </div>
 
       <div ref={expandMain} className="col-span-4 h-screen overflow-auto">
-        <div className="grid grid-cols-6 gap-2">
-          <div className="col-span-6 bg-white p-2 shadow-sm">
-            <div className='grid grid-cols-2'>
-              <div className='col-span-1 flex items-center'>
-                <div className='grid grid-cols-2 gap-2'>
-                  <div className='col-span-1'>
-                    <IconButton onClick={handleShowMenu}><BiMenu/></IconButton>
-                  </div>
-                  <div className='col-span-1'>
-                    
-                  </div>
+        <div className="col-span-6 bg-white p-2 shadow-sm sticky top-0 z-10 bg-opacity-95">
+          <div className='grid grid-cols-2'>
+            <div className='col-span-1 flex items-center'>
+              <div className='grid grid-cols-2 gap-2'>
+                <div className='col-span-1'>
+                  <IconButton onClick={handleShowMenu}><BiMenu/></IconButton>
                 </div>
-              </div>
-              <div className='col-span-1'>
-                <div className='flex justify-end'>
-                  <Button onClick={handleFloatingFrom} className='flex items-center' variant='outlined' startIcon={<RiFunctionAddFill/>}>Add Item</Button>
+                <div className='col-span-1'>
+                    
                 </div>
               </div>
             </div>
+            <div className='col-span-1'>
+              <div className='flex justify-end'>
+                <Button onClick={handleFloatingFrom} className='flex items-center' variant='outlined' startIcon={<RiFunctionAddFill/>}>Add Item</Button>
+              </div>
+            </div>
           </div>
+        </div>
+        <div className="grid grid-cols-6 gap-2 my-2">
+          
           {(showSwitched === 'basic-list')  && (
             <>
-              <div className="col-span-2 font-dsdigi">
+              <div className="col-span-4 sm:col-span-2  font-dsdigi">
                 <div className='px-6 mx-2 bg-white rounded-xl'>
                   <div className='text-[50px]  flex justify-center text-wrap'>{time}</div>
                   <div className='text-[20px] flex justify-center text-wrap'>{date}</div>
@@ -379,10 +456,10 @@ export default function Home () {
                   <Table stickyHeader>
                       <TableHead>
                         <TableRow>
-                          <TableCell>Borrower</TableCell>
-                          <TableCell>Educator</TableCell>
-                          <TableCell>Used In</TableCell>
-                          <TableCell>Status</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Borrower</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Educator</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Used In</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Status</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -429,12 +506,12 @@ export default function Home () {
                   <Table stickyHeader>
                       <TableHead>
                         <TableRow>
-                          <TableCell>Borrower</TableCell>
-                          <TableCell>Educator</TableCell>
-                          <TableCell>Used In</TableCell>
-                          <TableCell>Date</TableCell>
-                          <TableCell>Barrowed</TableCell>
-                          <TableCell>Returned</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Borrower</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Educator</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Used In</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Date</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Barrowed</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Returned</TableCell>
                         </TableRow>
                       </TableHead>
                       <TableBody>
@@ -476,8 +553,105 @@ export default function Home () {
           )}
           {(showSwitched === 'manage') && (
             <>
-              <div className='grid grid-cols-6 '>
-
+              <div className='col-span-6'>
+                <div className='grid grid-cols-6 gap-2 mx-2 '>
+                  <div className='sm:col-span-3 col-span-6'>
+                    <div className='bg-white'>
+                      <TableContainer component={Paper}>
+                        <Table stickyHeader>
+                            <TableHead>
+                              <TableRow>
+                                <TableCell className='bg-gray-800 text-white'>
+                                  <div className='grid grid-cols-2'>
+                                    <div className='col-span-1'>Material List</div>
+                                    <div className='col-span-1 flex justify-end'>
+                                      <IconButton size='small'><IoMdAddCircle className='text-white' onClick={handleMaterialAddInputShow}/></IconButton> 
+                                    </div>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            </TableHead>
+                            <TableBody>
+                              {isMaterialAddInputShow === true && (
+                                <TableRow>
+                                  <TableCell>
+                                    <div className='grid grid-cols-6'>
+                                      <div className='col-span-5'>
+                                        <TextField value={materialAddInput} onChange={handleMaterialAddInputChange} variant='outlined' size='small' placeholder='Material' label='Add new item' className='w-full'/>
+                                      </div>
+                                      <div className='col-span-1 flex justify-end'>
+                                        <Button onClick={handleMaterialAddInputSubmit} variant='contained' size='small'>Proside</Button>
+                                      </div>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              )}
+                              {materialDataList.map((row:{name:string,id:number},index)=>(
+                                <TableRow key={index}>
+                                  <TableCell>
+                                    <div className='grid grid-cols-2'>
+                                      <div className='col-span-1'>{row.name}</div>
+                                      <div className='col-span-1 flex justify-end'>
+                                        <IconButton table-id={row.id} size='small' onClick={handleDeleteMaterialItem}><MdOutlineDeleteOutline/></IconButton>
+                                      </div>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              ))}
+                            </TableBody>
+                          </Table>
+                      </TableContainer>
+                    </div>
+                  </div>
+                  <div className='sm:col-span-3 col-span-6'>
+                    <div className='bg-white'>
+                      <TableContainer component={Paper} className=''>
+                          <Table stickyHeader>
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell className='bg-gray-800 text-white'>
+                                    <div className='grid grid-cols-2'>
+                                      <div className='col-span-1'>Room</div>
+                                      <div className='col-span-1 flex justify-end'>
+                                        <IconButton size='small' onClick={handleRoomAddInputShow}><IoMdAddCircle className='text-white'/></IconButton>
+                                      </div>
+                                    </div>
+                                  </TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {isRoomAddInputShow === true && (
+                                  <TableRow>
+                                    <TableCell>
+                                      <div className='grid grid-cols-6'>
+                                        <div className='col-span-5'>
+                                          <TextField value={roomAddInput} onChange={handleRoomAddInputChange} variant='outlined' size='small' placeholder='Room' label='Add new room' className='w-full'/>
+                                        </div>
+                                        <div className='col-span-1 flex justify-end'>
+                                          <Button onClick={handleRoomAddInputSubmit} variant='contained' size='small'>Proside</Button>
+                                        </div>
+                                      </div>
+                                    </TableCell>
+                                  </TableRow>
+                                )}
+                                {roomDataList.map((row:{name:string,id:number},index)=>(
+                                  <TableRow key={index}>
+                                    <TableCell>
+                                      <div className='grid grid-cols-2'>
+                                        <div className='col-span-1'>{row.name}</div>
+                                        <div className='col-span-1 flex justify-end'>
+                                          <IconButton table-id={row.id} size='small' onClick={handleDeleteRoom} ><MdOutlineDeleteOutline/></IconButton>
+                                        </div>
+                                      </div>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </div>
+                  </div>
+                </div>
               </div>
             </>
           )}

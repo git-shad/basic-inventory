@@ -136,10 +136,43 @@ export async function setDataUsageItem(dt:{ borrower:string, educator:string, ma
   }
 }
 
+export async function addMaterial(name: string) {
+  try {
+    const results = await new Promise((resolve, reject) => {
+      db.query('INSERT INTO material (name) VALUES (?)', [name], (err, res: any) => {
+        if (err) reject(err);
+        if (res.affectedRows > 0) resolve(true); 
+        else resolve(false);
+      });
+    });
+    return results;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
+export async function deleteMaterial(id: number) {
+  try {
+    const results = await new Promise((resolve, reject) => {
+      db.query('DELETE FROM material WHERE materialId = ?', [id], (err, res: any) => {
+        if (err) reject(err);
+        if (res.affectedRows > 0) resolve(true);
+        else resolve(false);
+      });
+    });
+    return results;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
+
 export async function materialList(){
   try {
     const results = JSON.stringify(await new Promise((resolve, reject) => {
-      db.query('select name from material', (err, res) => {
+      db.query('select materialId as id ,name from material', (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });
@@ -151,10 +184,42 @@ export async function materialList(){
   }
 }
 
+export async function deleteRoom(id: number) {
+  try {
+    const results = await new Promise((resolve, reject) => {
+      db.query('DELETE FROM room WHERE roomId = ?', [id], (err, res: any) => {
+        if (err) reject(err);
+        if (res.affectedRows > 0) resolve(true);
+        else resolve(false);
+      });
+    });
+    return results;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
+export async function addRoom(name: string) {
+  try {
+    const results = await new Promise((resolve, reject) => {
+      db.query('INSERT INTO room (name) VALUES (?)', [name], (err, res: any) => {
+        if (err) reject(err);
+        if (res.affectedRows > 0) resolve(true); 
+        else resolve(false);
+      });
+    });
+    return results;
+  } catch (error) {
+    console.error("Database error:", error);
+    throw error;
+  }
+}
+
 export async function roomList(){
   try {
     const results = JSON.stringify(await new Promise((resolve, reject) => {
-      db.query('select name from room', (err, res) => {
+      db.query('select roomId as id ,name from room', (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });
