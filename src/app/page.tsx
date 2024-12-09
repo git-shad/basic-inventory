@@ -28,8 +28,8 @@ import { FaXmark } from "react-icons/fa6";
 import { AiTwotoneSetting } from "react-icons/ai";
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import { FaRegEdit } from "react-icons/fa";
 import { IoMdAddCircle } from "react-icons/io";
+import { AiOutlineInsertRowAbove } from "react-icons/ai";
 
 export default function Home () {
 
@@ -280,9 +280,24 @@ export default function Home () {
   //end:011
 
   const [isButtonMaterialDeleteShow,setButtonMaterialDeleteShow] = useState<boolean[]>([false])
-  const handleDeleteMaterialItem = async (e:any,index:number) => {
+  const visibleButtonMaterialDeleteShow = (index:number) => {
+    setButtonMaterialDeleteShow(prevStatus => {
+      const updatedStatus = [...prevStatus];
+      if (index >= updatedStatus.length) updatedStatus.push(false); 
+      updatedStatus[index] = !updatedStatus[index];
+      return updatedStatus;
+    });
+  }
+  const handleDeleteMaterial = async (e:any,index:number) => {
     const id: number = Number(e.currentTarget.getAttribute('table-id'));
-    
+
+    setButtonMaterialDeleteShow(prevStatus => {
+      const updatedStatus = [...prevStatus];
+      if (index >= updatedStatus.length) updatedStatus.push(false); 
+      updatedStatus[index] = !updatedStatus[index];
+      return updatedStatus;
+    });
+
     await deleteMaterial(id).then((isDone)=>{
       if(isDone){
         // Show success message and update the table
@@ -298,9 +313,25 @@ export default function Home () {
     })
   }
 
+  const [isButtonRoomDeleteShow,setButtonRoomDeleteShow] = useState<boolean[]>([false])
+  const visibleButtonRoomDeleteShow = (index:number) => {
+    setButtonRoomDeleteShow(prevStatus => {
+      const updatedStatus = [...prevStatus];
+      if (index >= updatedStatus.length) updatedStatus.push(false); 
+      updatedStatus[index] = !updatedStatus[index];
+      return updatedStatus;
+    });
+  }
   const handleDeleteRoom = async (e: React.MouseEvent<HTMLButtonElement>)=>{
     const id: number = Number(e.currentTarget.getAttribute('table-id'));
     
+    setButtonRoomDeleteShow(prevStatus => {
+      const updatedStatus = [...prevStatus];
+      if (index >= updatedStatus.length) updatedStatus.push(false); 
+      updatedStatus[index] = !updatedStatus[index];
+      return updatedStatus;
+    });
+
     await deleteRoom(id).then((isDone)=>{
       if(isDone){
         // Show success message and update the table
@@ -566,7 +597,7 @@ export default function Home () {
                                   <div className='grid grid-cols-2'>
                                     <div className='col-span-1'>Material List</div>
                                     <div className='col-span-1 flex justify-end'>
-                                      <IconButton size='small'><IoMdAddCircle className='text-white' onClick={handleMaterialAddInputShow}/></IconButton> 
+                                      <IconButton size='small' onClick={handleMaterialAddInputShow}><IoMdAddCircle className='text-white'/></IconButton> 
                                     </div>
                                   </div>
                                 </TableCell>
@@ -581,7 +612,7 @@ export default function Home () {
                                         <TextField value={materialAddInput} onChange={handleMaterialAddInputChange} variant='outlined' size='small' placeholder='Material' label='Add new item' className='w-full'/>
                                       </div>
                                       <div className='col-span-1 flex justify-end'>
-                                        <Button onClick={handleMaterialAddInputSubmit} variant='contained' size='small' startIcon={<RiFunctionAddFill/>}>Proside</Button>
+                                        <Button className='normal-case' onClick={handleMaterialAddInputSubmit} variant='contained' size='small' startIcon={<AiOutlineInsertRowAbove/>}>Insert</Button>
                                       </div>
                                     </div>
                                   </TableCell>
@@ -594,9 +625,9 @@ export default function Home () {
                                       <div className='col-span-1'>{row.name}</div>
                                       <div className='col-span-1 flex justify-end'>
                                         {isButtonMaterialDeleteShow[index] === true ? (
-                                          <Button className='normal-case' table-id={row.id} component="button" size='small' variant='text' startIcon={<MdOutlineDeleteOutline/>} onClick={(e)=>{handleDeleteMaterialItem(e,index)}}>delete</Button>
+                                          <Button className='normal-case' color='error' table-id={row.id} component="button" size='small' variant='outlined' startIcon={<MdOutlineDeleteOutline/>} onClick={(e)=>{handleDeleteMaterial(e,index)}}>Delete</Button>
                                         ) : (
-                                          <IconButton size='small' onClick={}><MdOutlineDeleteOutline/></IconButton>
+                                          <IconButton size='small' onClick={()=>{visibleButtonMaterialDeleteShow(index)}}><MdOutlineDeleteOutline/></IconButton>
                                         )}
                                       </div>
                                     </div>
@@ -633,19 +664,23 @@ export default function Home () {
                                           <TextField value={roomAddInput} onChange={handleRoomAddInputChange} variant='outlined' size='small' placeholder='Room' label='Add new room' className='w-full'/>
                                         </div>
                                         <div className='col-span-1 flex justify-end'>
-                                          <Button onClick={handleRoomAddInputSubmit} variant='contained' size='small' startIcon={<RiFunctionAddFill/>}>Proside</Button>
+                                          <Button className='normal-case' onClick={handleRoomAddInputSubmit} variant='contained' size='small' startIcon={<AiOutlineInsertRowAbove/>}>Insert</Button>
                                         </div>
                                       </div>
                                     </TableCell>
                                   </TableRow>
                                 )}
-                                {roomDataList.map((row:{name:string,id:number},index)=>(
+                                {roomDataList.map((row:{name:string,id:number},index:number)=>(
                                   <TableRow key={index}>
                                     <TableCell>
                                       <div className='grid grid-cols-2'>
                                         <div className='col-span-1'>{row.name}</div>
                                         <div className='col-span-1 flex justify-end'>
-                                          <IconButton table-id={row.id} size='small' onClick={handleDeleteRoom} ><MdOutlineDeleteOutline/></IconButton>
+                                          {isButtonRoomDeleteShow[index] === true ? (
+                                            <Button className='normal-case' color='error' table-id={row.id} component="button" size='small' variant='outlined' startIcon={<MdOutlineDeleteOutline/>} onClick={(e)=>{handleDeleteRoom(e,index)}}>Delete</Button>
+                                          ) : (
+                                            <IconButton size='small' onClick={()=>{visibleButtonRoomDeleteShow(index)}}><MdOutlineDeleteOutline/></IconButton>
+                                          )}
                                         </div>
                                       </div>
                                     </TableCell>
