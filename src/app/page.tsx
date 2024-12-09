@@ -30,6 +30,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import { IoMdAddCircle } from "react-icons/io";
 import { AiOutlineInsertRowAbove } from "react-icons/ai";
+import { BsExclamationTriangle } from "react-icons/bs";
 
 export default function Home () {
 
@@ -60,6 +61,7 @@ export default function Home () {
   const [tableStatus, setTableStatus] = useState<boolean[]>([]);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false); 
 
+  // This function handles updating the status of a usage item in the table.
   const handleTableStatus = async (e: React.MouseEvent<HTMLButtonElement>, index: number) => {
     if (isUpdatingStatus) return; 
     setIsUpdatingStatus(true); 
@@ -73,6 +75,25 @@ export default function Home () {
       });
     }    
     setIsUpdatingStatus(false); 
+  };
+
+  const [tableFailStatus, setTableFailStatus] = useState<boolean[]>([]);
+  const [isUpdatingFailStatus, setIsUpdatingFailStatus] = useState(false); 
+
+  // This function handles updating the status of a usage item in the fail return table.
+  const handleTableFailStatus = async (e: React.MouseEvent<HTMLButtonElement>, index: number) => {
+    if (isUpdatingFailStatus) return; 
+    setIsUpdatingFailStatus(true); 
+    const id: number = Number(e.currentTarget.getAttribute('table-id'));
+    const result = await updateStatusUsageItem(id, !tableStatus[index]);
+    if (result) {
+      setTableFailStatus(prevStatus => {
+        const updatedStatus = [...prevStatus];
+        updatedStatus[index] = !updatedStatus[index];
+        return updatedStatus;
+      });
+    }    
+    setIsUpdatingFailStatus(false); 
   };
 
   useEffect(()=>{
@@ -98,6 +119,30 @@ export default function Home () {
   },[updateUsageItemList])
   //end:004
   
+  //start:007 open and close menu list
+  const [menu,setMenu] = useState(true)
+  const showMenu = useRef<HTMLDivElement | null>(null)
+  const expandMain = useRef<HTMLDivElement | null>(null)
+  const handleShowMenu = () =>{
+    if(!showMenu.current || !expandMain.current){ return }
+    
+    const ref1 = showMenu.current
+    const ref2 = expandMain.current
+     
+    if(menu){
+      ref1.classList.add('hidden')
+      ref2.classList.remove('col-span-4')
+      ref2.classList.add('col-span-5')
+      setMenu(false)
+    }else{
+      ref1.classList.remove('hidden')
+      ref2.classList.remove('col-span-5')
+      ref2.classList.add('col-span-4')
+      setMenu(true)
+    }
+  }
+  //end:007 
+
   //start:005 storing first selected list material
   const [selectedMaterial,setSelectedMaterial] = useState<string[]>([])
   const handleAddMaterialSelected = (e:any) =>{
@@ -189,30 +234,6 @@ export default function Home () {
     }
   }
   //end:001
-
-  //start:007 open and close menu list
-  const [menu,setMenu] = useState(true)
-  const showMenu = useRef<HTMLDivElement | null>(null)
-  const expandMain = useRef<HTMLDivElement | null>(null)
-  const handleShowMenu = () =>{
-    if(!showMenu.current || !expandMain.current){ return }
-
-    const ref1 = showMenu.current
-    const ref2 = expandMain.current
-     
-    if(menu){
-      ref1.classList.add('hidden')
-      ref2.classList.remove('col-span-4')
-      ref2.classList.add('col-span-5')
-      setMenu(false)
-    }else{
-      ref1.classList.remove('hidden')
-      ref2.classList.remove('col-span-5')
-      ref2.classList.add('col-span-4')
-      setMenu(true)
-    }
-  }
-  //end:007 
 
   //start:008 switching between basic-list, manage and history
   const [showSwitched,setShowSwitched] = useState('basic-list');
@@ -445,15 +466,17 @@ export default function Home () {
 
       <div ref={showMenu} className="col-span-1 h-screen border border-r rounded-tr-md rounded-br-md py-4 px-2 bg-white shadow-md">
         <div className='grid grid-cols-1 gap-1'>
-          <div className='col-span-1 flex justify-center mb-4'>
+          <div className='col-span-1 flex justify-center mb-10'>
             <div className="text-xl font-bold">HIRAM</div>
           </div>
           <div className='col-span-1'>
-            <Button onClick={()=>{setShowSwitched('basic-list')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<PiClipboardTextDuotone/>}>Basic List</Button>
-            <Button onClick={()=>{setShowSwitched('history-list')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<MdHistory/>}>History List</Button>
-            <Button onClick={()=>{setShowSwitched('chart')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<AiTwotoneSetting/>}>Chart</Button>
-            <Button onClick={()=>{setShowSwitched('manage')}} className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<AiTwotoneSetting/>}>Manage</Button>
-            <Button className='flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<MdOutlineLogout/>}>Logout</Button>
+            <div className='grid grid-cols-1'>
+              <Button onClick={()=>{setShowSwitched('basic-list')}} className='col-span-1 flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<PiClipboardTextDuotone/>}>Basic List</Button>
+              <Button onClick={()=>{setShowSwitched('fail-return')}} className='col-span-1 flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<BsExclamationTriangle/>}>Fail Return</Button>
+              <Button onClick={()=>{setShowSwitched('history-list')}} className='col-span-1 flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<MdHistory/>}>History List</Button>
+              <Button onClick={()=>{setShowSwitched('manage')}} className='col-span-1 flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<AiTwotoneSetting/>}>Manage</Button>
+              <Button className='col-span-1 flex items-center w-full my-2' style={{ justifyContent: 'flex-start' }} startIcon={<MdOutlineLogout/>}>Logout</Button>
+            </div>
           </div>
         </div>
       </div>
@@ -527,6 +550,60 @@ export default function Home () {
                             </TableCell>
                             <TableCell>
                               <Button table-id={row.id} onClick={(e)=>{handleTableStatus(e,index)}} component="button" variant='outlined' color={tableStatus[index] ? 'success' : 'error'} size='small' sx={{ borderRadius: 50 }} >{tableStatus[index] ? 'Returned' : 'Borrowed'}</Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                </TableContainer>
+              </div>    
+            </>
+          )}          
+          {(showSwitched === 'fail-return') && (
+            <>
+              <div className='col-span-6 px-2'>
+                <TableContainer component={Paper} className=''>
+                  <Table stickyHeader>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell className='bg-gray-800 text-white'>Borrower</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Educator</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Used In</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Date</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Borrowed</TableCell>
+                          <TableCell className='bg-gray-800 text-white'>Returned</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {thistory.filter(row => row.returned === 'Fail').map((row, index) => (
+                          <TableRow key={index}>
+                            <TableCell>{row.borrower}</TableCell>
+                            <TableCell>{row.educator}</TableCell>
+                            <TableCell>
+                                <ListItemButton onClick={(e) => {handleTableCellMaterialOpen(e, index)}}>
+                                <ListItemIcon>
+                                  
+                                </ListItemIcon>
+                                <ListItemText primary={"Class Room : " + row.room} />
+                                {openMaterial[index] ? <ExpandLess /> : <ExpandMore />}
+                              </ListItemButton>
+                              <Collapse in={openMaterial[index]} timeout="auto" unmountOnExit>
+                                <List component="div" disablePadding>
+                                    {row.material.map((value: any, index) => (
+                                    <ListItemButton key={index} sx={{ pl: 4 }}>
+                                      <ListItemIcon>
+                                      
+                                      </ListItemIcon>
+                                      <ListItemText primary={value} />
+                                    </ListItemButton>
+                                  ))}
+                                </List>
+                              </Collapse>
+                            </TableCell>
+                            <TableCell>{row.date}</TableCell>
+                            <TableCell>{row.barrowed}</TableCell>
+                            <TableCell>
+                              <Button table-id={row.id} onClick={(e)=>{handleTableFailStatus(e,index)}} component="button" variant='outlined' color={tableFailStatus[index] ? 'success' : 'error'} size='small' sx={{ borderRadius: 50 }} >{tableFailStatus[index] ? 'Returned' : 'Borrowed'}</Button>
                             </TableCell>
                           </TableRow>
                         ))}
