@@ -322,7 +322,7 @@ export default function Home () {
       return updatedStatus;
     });
   }
-  const handleDeleteRoom = async (e: React.MouseEvent<HTMLButtonElement>)=>{
+  const handleDeleteRoom = async (e:any,index:number)=>{
     const id: number = Number(e.currentTarget.getAttribute('table-id'));
     
     setButtonRoomDeleteShow(prevStatus => {
