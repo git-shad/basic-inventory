@@ -62,7 +62,8 @@ export async function getAllDataUsageItemList(){
                 else date_format(time(updated_at),'%l:%i %p') 
               end as returned 
           from usageItem
-          where date(created_at) != date(current_timestamp);`, (err,res)=>{
+          where date(created_at) != date(current_timestamp)
+          order by date(created_at) desc;`, (err,res)=>{
         if(err) reject(err)
         else resolve(res)
       })

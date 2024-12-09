@@ -60,7 +60,7 @@ export default function Home () {
   const [tableStatus, setTableStatus] = useState<boolean[]>([]);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false); 
 
-  const handleTableStatus = async (e: any, index: number) => {
+  const handleTableStatus = async (e: React.MouseEvent<HTMLButtonElement>, index: number) => {
     if (isUpdatingStatus) return; 
     setIsUpdatingStatus(true); 
     const id: number = Number(e.currentTarget.getAttribute('table-id'));
@@ -279,7 +279,8 @@ export default function Home () {
   }
   //end:011
 
-  const handleDeleteMaterialItem = async (e:any)=>{
+  const [isButtonMaterialDeleteShow,setButtonMaterialDeleteShow] = useState<boolean[]>([false])
+  const handleDeleteMaterialItem = async (e:any,index:number) => {
     const id: number = Number(e.currentTarget.getAttribute('table-id'));
     
     await deleteMaterial(id).then((isDone)=>{
@@ -297,7 +298,7 @@ export default function Home () {
     })
   }
 
-  const handleDeleteRoom = async (e:any)=>{
+  const handleDeleteRoom = async (e: React.MouseEvent<HTMLButtonElement>)=>{
     const id: number = Number(e.currentTarget.getAttribute('table-id'));
     
     await deleteRoom(id).then((isDone)=>{
@@ -384,12 +385,12 @@ export default function Home () {
               </div>
               <div className='col-span-1 w-[35ch] shadow-2xl border-2 rounded-xl py-2 px-4'>
                 {selectedMaterial.map((selected,index)=>(
-                  <Button key={index} name={selected} onClick={handleRemoveMaterialSelected} className='m-1' variant='text' sx={{ borderRadius: 50 }}>{selected}</Button>
+                  <Button key={index} name={selected} onClick={handleRemoveMaterialSelected} component="button" className='m-1' variant='text' sx={{ borderRadius: 50 }}>{selected}</Button>
                 ))}
               </div>
               <div className='col-span-1 w-[35ch] shadow-2xl border-2 rounded-xl py-2 px-4'>
                 {materialDataList.map((rows:{name:any},index)=>(
-                  <Button onClick={handleAddMaterialSelected} key={index} name={rows.name} className='m-1' variant='text' sx={{ borderRadius: 50 }}>{rows.name}</Button>
+                  <Button onClick={handleAddMaterialSelected} component="button" key={index} name={rows.name} className='m-1' variant='text' sx={{ borderRadius: 50 }}>{rows.name}</Button>
                 ))}
               </div>
             </div>
@@ -397,7 +398,7 @@ export default function Home () {
           <div ref={roomOption} className='col-span-1 flex items-center hidden'>
             <div className='w-[35ch] shadow-2xl border-2 rounded-xl py-2 px-4'>
               {roomDataList.map((rows:{name:any},index)=>(
-                <Button key={index} name={rows.name} onClick={handleRoomSelected} className='m-1' variant='text' sx={{ borderRadius: 50 }}>{rows.name}</Button>
+                <Button key={index} name={rows.name} onClick={handleRoomSelected} component="button" className='m-1' variant='text' sx={{ borderRadius: 50 }}>{rows.name}</Button>
               ))}
             </div>
           </div>
@@ -489,7 +490,7 @@ export default function Home () {
                               </Collapse>
                             </TableCell>
                             <TableCell>
-                              <Button table-id={row.id} onClick={(e)=>{handleTableStatus(e,index)}} variant='outlined' color={tableStatus[index] ? 'success' : 'error'} size='small' sx={{ borderRadius: 50 }} >{tableStatus[index] ? 'Returned' : 'Borrowed'}</Button>
+                              <Button table-id={row.id} onClick={(e)=>{handleTableStatus(e,index)}} component="button" variant='outlined' color={tableStatus[index] ? 'success' : 'error'} size='small' sx={{ borderRadius: 50 }} >{tableStatus[index] ? 'Returned' : 'Borrowed'}</Button>
                             </TableCell>
                           </TableRow>
                         ))}
@@ -580,19 +581,23 @@ export default function Home () {
                                         <TextField value={materialAddInput} onChange={handleMaterialAddInputChange} variant='outlined' size='small' placeholder='Material' label='Add new item' className='w-full'/>
                                       </div>
                                       <div className='col-span-1 flex justify-end'>
-                                        <Button onClick={handleMaterialAddInputSubmit} variant='contained' size='small'>Proside</Button>
+                                        <Button onClick={handleMaterialAddInputSubmit} variant='contained' size='small' startIcon={<RiFunctionAddFill/>}>Proside</Button>
                                       </div>
                                     </div>
                                   </TableCell>
                                 </TableRow>
                               )}
-                              {materialDataList.map((row:{name:string,id:number},index)=>(
+                              {materialDataList.map((row:{name:string,id:number},index:number)=>(
                                 <TableRow key={index}>
                                   <TableCell>
                                     <div className='grid grid-cols-2'>
                                       <div className='col-span-1'>{row.name}</div>
                                       <div className='col-span-1 flex justify-end'>
-                                        <IconButton table-id={row.id} size='small' onClick={handleDeleteMaterialItem}><MdOutlineDeleteOutline/></IconButton>
+                                        {isButtonMaterialDeleteShow[index] === true ? (
+                                          <Button className='normal-case' table-id={row.id} component="button" size='small' variant='text' startIcon={<MdOutlineDeleteOutline/>} onClick={(e)=>{handleDeleteMaterialItem(e,index)}}>delete</Button>
+                                        ) : (
+                                          <IconButton size='small' onClick={}><MdOutlineDeleteOutline/></IconButton>
+                                        )}
                                       </div>
                                     </div>
                                   </TableCell>
@@ -628,7 +633,7 @@ export default function Home () {
                                           <TextField value={roomAddInput} onChange={handleRoomAddInputChange} variant='outlined' size='small' placeholder='Room' label='Add new room' className='w-full'/>
                                         </div>
                                         <div className='col-span-1 flex justify-end'>
-                                          <Button onClick={handleRoomAddInputSubmit} variant='contained' size='small'>Proside</Button>
+                                          <Button onClick={handleRoomAddInputSubmit} variant='contained' size='small' startIcon={<RiFunctionAddFill/>}>Proside</Button>
                                         </div>
                                       </div>
                                     </TableCell>
