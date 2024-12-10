@@ -161,11 +161,11 @@ export async function getDataUsageItemList(){
   }
 }
 
-export async function setDataUsageItem(dt:{ borrower:string, educator:string, material: string, room:string }){
+export async function setDataUsageItem(dt:{ borrower:string, educator:string, material: string, room:string,status:boolean }){
   try{
      const results:boolean = await new Promise((resolve, reject)=>{
-      db.query('insert into usageItem(borrower,educator,material,room) values(?,?,?,?);',
-      [dt.borrower,dt.educator,dt.material,dt.room],(err,res:any)=>{
+      db.query('insert into usageItem(borrower,educator,material,room,status) values(?,?,?,?,?);',
+      [dt.borrower,dt.educator,dt.material,dt.room,dt.status ? 1 : 0],(err,res:any)=>{
         if(err) reject(err)
         if(res.affectedRows > 0) resolve(true); // Resolve with true if any rows were affected
         else resolve(false)

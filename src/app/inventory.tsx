@@ -314,7 +314,8 @@ export default function Inventory ({ signIn }: { signIn: (isLoggedIn: boolean) =
       borrower: inpTextFields.borrower,
       educator: inpTextFields.educator,
       material: JSON.stringify(selectedMaterial),
-      room: selectedRoom
+      room: selectedRoom,
+      status: false
     }).then((isDone)=>{
       if(isDone){
         // Show success message and update the table
