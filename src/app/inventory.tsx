@@ -100,8 +100,16 @@ export default function Inventory ({ signIn }: { signIn: (isLoggedIn: boolean) =
   };
 
   const [tableFailStatus, setTableFailStatus] = useState<boolean[]>([]);
-  const [isUpdatingFailStatus, setIsUpdatingFailStatus] = useState(false); 
+  const [isUpdatingFailStatus, setIsUpdatingFailStatus] = useState(false); //blocking multiple enter
 
+  const [isUpdateFailStatus, setIsUpdateFailStatus] = useState(false);
+  useEffect(()=>{
+    if(isUpdateFailStatus){
+      (async ()=>{ setTHistory(await getAllHistoryDataUsageItemList()) })();
+      setIsUpdateFailStatus(false);
+    }
+  },[isUpdateFailStatus])
+  
   // This function handles updating the status of a usage item in the fail return table.
   const handleTableFailStatus = async (e: React.MouseEvent<HTMLButtonElement>, index: number) => {
     if (isUpdatingFailStatus) return; 
@@ -114,6 +122,7 @@ export default function Inventory ({ signIn }: { signIn: (isLoggedIn: boolean) =
         updatedStatus[index] = !updatedStatus[index];
         return updatedStatus;
       });
+      setIsUpdateFailStatus(!isUpdateFailStatus); 
     }    
     setIsUpdatingFailStatus(false); 
   };
