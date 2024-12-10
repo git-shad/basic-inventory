@@ -35,7 +35,7 @@ CREATE TABLE `material` (
   `materialId` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`materialId`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -68,7 +68,7 @@ CREATE TABLE `room` (
   `roomId` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`roomId`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -136,7 +136,7 @@ CREATE TABLE `usageItem` (
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`usageId`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -148,16 +148,21 @@ LOCK TABLES `usageItem` WRITE;
 INSERT INTO `usageItem` VALUES
 (1,'isaac','arjay','[\"USB\",\"speakers\"]','ICT8',0,'2024-12-05 17:51:02','2024-12-05 17:51:02'),
 (2,'isaac','meow','[\"Projector\",\"HDMI\",\"Power adapter\"]','ICT2',1,'2024-12-05 18:11:18','2024-12-09 10:28:52'),
-(3,'steven','elaine','[\"USB\",\"TV\"]','',0,'2024-12-05 18:54:52','2024-12-05 18:54:52'),
-(4,'isaac','anthony','[\"USB\"]','CL2',0,'2024-12-06 07:26:17','2024-12-07 11:28:36'),
-(5,'isaac','james','[\"Projector\",\"Extention wire\",\"HDMI\"]','CL4',0,'2024-12-06 07:57:15','2024-12-07 14:46:55'),
-(6,'TEST','TEST','[\"Extention wire\"]','ICT7',0,'2024-12-06 12:09:19','2024-12-06 12:09:19'),
+(3,'steven','elaine','[\"USB\",\"TV\"]','',0,'2024-12-05 18:54:52','2024-12-10 04:34:48'),
+(4,'isaac','anthony','[\"USB\"]','CL2',0,'2024-12-06 07:26:17','2024-12-10 04:34:58'),
+(5,'isaac','james','[\"Projector\",\"Extention wire\",\"HDMI\"]','CL4',0,'2024-12-06 07:57:15','2024-12-10 04:35:11'),
+(6,'TEST','TEST','[\"Extention wire\"]','ICT7',0,'2024-12-06 12:09:19','2024-12-10 04:35:32'),
 (7,'meow','isaac','[\"TV\",\"speakers\"]','CL4',1,'2024-12-07 00:25:26','2024-12-07 14:57:13'),
 (8,'meow','anthony','[\"USB\"]','ICT7',1,'2024-12-07 00:44:31','2024-12-07 14:58:14'),
 (9,'isaac','sofia','[\"Projector\",\"HDMI\",\"Power cable\"]','ICT5',1,'2024-12-08 02:33:27','2024-12-08 16:12:26'),
 (10,'steven','vian','[\"speakers\",\"TV\"]','CL4',1,'2024-12-08 10:38:28','2024-12-08 10:38:57'),
 (11,'steven','isaac','[\"Projector\",\"USB\",\"HDMI\",\"Power cable\",\"Power adapter\",\"Extention wire\"]','ICT5',1,'2024-12-09 04:30:38','2024-12-09 04:30:53'),
-(12,'steven','isaac','[\"Room Key\",\"HDMI\",\"USB\",\"speakers\",\"TV\"]','CL4',NULL,'2024-12-09 04:43:24','2024-12-09 04:43:24');
+(12,'steven','isaac','[\"Room Key\",\"HDMI\",\"USB\",\"speakers\",\"TV\"]','CL4',0,'2024-12-09 04:43:24','2024-12-10 04:33:29'),
+(13,'mark','kenneth','[\"Room Key\",\"HDMI\",\"Power cable\",\"Projector\",\"Power adapter\",\"Extention wire\"]','ICT8',NULL,'2024-12-10 04:39:24','2024-12-10 04:39:24'),
+(14,'princess','mystee','[\"Room Key\"]','CL3',NULL,'2024-12-10 04:40:09','2024-12-10 04:40:09'),
+(15,'roman','miggi','[\"TV\",\"HDMI\"]','ICT2',NULL,'2024-12-10 04:41:09','2024-12-10 04:41:09'),
+(16,'Vian','Juego','[\"HDMI\",\"Projector\",\"Power cable\",\"Power adapter\"]','ICT2',NULL,'2024-12-10 04:41:38','2024-12-10 04:41:38'),
+(17,'Kevin','Elyn','[\"Room Key\"]','ICT7',NULL,'2024-12-10 04:42:27','2024-12-10 04:42:27');
 /*!40000 ALTER TABLE `usageItem` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -170,4 +175,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-10  2:18:27
+-- Dump completed on 2024-12-10  5:00:50
