@@ -94,6 +94,32 @@ INSERT INTO `room` VALUES
 UNLOCK TABLES;
 
 --
+-- Table structure for table `signin`
+--
+
+DROP TABLE IF EXISTS `signin`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `signin` (
+  `siginId` int(11) NOT NULL AUTO_INCREMENT,
+  `email` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`siginId`)
+) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `signin`
+--
+
+LOCK TABLES `signin` WRITE;
+/*!40000 ALTER TABLE `signin` DISABLE KEYS */;
+INSERT INTO `signin` VALUES
+(1000,'user@example.com','5f4dcc3b5aa765d61d8327deb882cf99');
+/*!40000 ALTER TABLE `signin` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `usageItem`
 --
 
@@ -144,4 +170,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-12-09 21:19:38
+-- Dump completed on 2024-12-10  2:18:27
