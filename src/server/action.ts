@@ -272,3 +272,20 @@ export async function roomList(){
     throw error; 
   }
 }
+
+export async function signIn_db(username: string, password: string) {
+  try {
+    const results = await new Promise((resolve, reject) => {
+      db.query('SELECT * FROM signin WHERE email = ? AND password = md5(?)',[username, password],
+        (err, res:any) => {
+          if (err) reject(err);
+          else resolve(res.length > 0 ? true : false);
+        }
+      );
+    });
+    return results; 
+  } catch (error) {
+    console.error('Database error:', error);
+    throw error;
+  }
+}
