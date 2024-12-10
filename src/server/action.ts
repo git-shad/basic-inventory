@@ -261,7 +261,7 @@ export async function addRoom(name: string) {
 export async function roomList(){
   try {
     const results = JSON.stringify(await new Promise((resolve, reject) => {
-      db.query('select roomId as id ,name from room order by roomId desc', (err, res) => {
+      db.query('select roomId as id ,name from room order by name asc', (err, res) => {
         if (err) reject(err);
         else resolve(res);
       });
